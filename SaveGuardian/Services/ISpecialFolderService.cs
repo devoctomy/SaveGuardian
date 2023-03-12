@@ -1,7 +1,6 @@
-﻿namespace SaveGuardian.Services
+﻿namespace SaveGuardian.Services;
+
+public interface ISpecialFolderService
 {
-    public interface ISpecialFolderService
-    {
-        string LocalApplicationData { get; }
-    }
+    string LocalApplicationData { get; }
 }

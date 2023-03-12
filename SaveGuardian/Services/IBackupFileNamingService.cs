@@ -1,13 +1,12 @@
 ﻿using SaveGuardian.Model;
 
-namespace SaveGuardian.Services
+namespace SaveGuardian.Services;
+
+public interface IBackupFileNamingService
 {
-    public interface IBackupFileNamingService
-    {
-        public string Rename(
-            VersionFolder versionFolder,
-            string fullPath,
-            string extension,
-            bool createDirectory);
-    }
+    public string Rename(
+        VersionFolder versionFolder,
+        string fullPath,
+        string extension,
+        bool createDirectory);
 }

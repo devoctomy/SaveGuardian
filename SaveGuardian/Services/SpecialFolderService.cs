@@ -1,7 +1,6 @@
-﻿namespace SaveGuardian.Services
+﻿namespace SaveGuardian.Services;
+
+public class SpecialFolderService : ISpecialFolderService
 {
-    public class SpecialFolderService : ISpecialFolderService
-    {
-        public string LocalApplicationData => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-    }
+    public string LocalApplicationData => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 }

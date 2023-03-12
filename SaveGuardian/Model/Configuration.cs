@@ -1,6 +1,5 @@
-﻿namespace SaveGuardian.Model
+﻿namespace SaveGuardian.Model;
+
+public class Configuration
 {
-    public class Configuration
-    {
-    }
 }

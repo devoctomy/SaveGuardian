@@ -1,7 +1,6 @@
-﻿namespace SaveGuardian.Services
+﻿namespace SaveGuardian.Services;
+
+public interface IDateTimeService
 {
-    public interface IDateTimeService
-    {
-        DateTime Now { get; }
-    }
+    DateTime Now { get; }
 }

@@ -1,46 +1,45 @@
 ﻿using SaveGuardian.Model;
 
-namespace SaveGuardian.Services
+namespace SaveGuardian.Services;
+
+public class BackupFileNamingService : IBackupFileNamingService
 {
-    public class BackupFileNamingService : IBackupFileNamingService
+    private readonly IDateTimeService _dateTimeService;
+    private readonly ISpecialFolderService _specialFolderService;
+
+    public BackupFileNamingService(
+        IDateTimeService dateTimeService,
+        ISpecialFolderService specialFolderService)
     {
-        private readonly IDateTimeService _dateTimeService;
-        private readonly ISpecialFolderService _specialFolderService;
+        _dateTimeService = dateTimeService;
+        _specialFolderService = specialFolderService;
+    }
 
-        public BackupFileNamingService(
-            IDateTimeService dateTimeService,
-            ISpecialFolderService specialFolderService)
+    public string Rename(
+        VersionFolder versionFolder,
+        string fullPath,
+        string extension,
+        bool createDirectory)
+    {
+        var backupPath = GetVersionFolderBackupPath(versionFolder);
+        if(createDirectory)
         {
-            _dateTimeService = dateTimeService;
-            _specialFolderService = specialFolderService;
+            Directory.CreateDirectory(backupPath);
         }
 
-        public string Rename(
-            VersionFolder versionFolder,
-            string fullPath,
-            string extension,
-            bool createDirectory)
-        {
-            var backupPath = GetVersionFolderBackupPath(versionFolder);
-            if(createDirectory)
-            {
-                Directory.CreateDirectory(backupPath);
-            }
+        var relativePath = fullPath.Replace(versionFolder.Path, string.Empty).TrimStart('/');
+        var backupFullPath = $"{backupPath}/{relativePath}_{_dateTimeService.Now:ddMMyyyy-HHmmss}.{extension}";
+        return backupFullPath.Replace('\\', '/');
+    }
 
-            var relativePath = fullPath.Replace(versionFolder.Path, string.Empty).TrimStart('/');
-            var backupFullPath = $"{backupPath}/{relativePath}_{_dateTimeService.Now:ddMMyyyy-HHmmss}.{extension}";
-            return backupFullPath.Replace('\\', '/');
-        }
-
-        private string GetVersionFolderBackupPath(VersionFolder versionFolder)
+    private string GetVersionFolderBackupPath(VersionFolder versionFolder)
+    {
+        var backupRoot = _specialFolderService.LocalApplicationData;
+        if (!backupRoot.EndsWith("/"))
         {
-            var backupRoot = _specialFolderService.LocalApplicationData;
-            if (!backupRoot.EndsWith("/"))
-            {
-                backupRoot += "/";
-            }
-            backupRoot += $"SaveVersioningPoc/{versionFolder.Name}";
-            return backupRoot;
+            backupRoot += "/";
         }
+        backupRoot += $"SaveVersioningPoc/{versionFolder.Name}";
+        return backupRoot;
     }
 }

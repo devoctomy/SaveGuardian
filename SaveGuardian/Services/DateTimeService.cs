@@ -1,7 +1,6 @@
-﻿namespace SaveGuardian.Services
+﻿namespace SaveGuardian.Services;
+
+public class DateTimeService : IDateTimeService
 {
-    public class DateTimeService : IDateTimeService
-    {
-        public DateTime Now => DateTime.Now;
-    }
+    public DateTime Now => DateTime.Now;
 }
