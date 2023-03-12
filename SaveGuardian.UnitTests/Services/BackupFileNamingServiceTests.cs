@@ -9,6 +9,7 @@ namespace SaveGuardian.UnitTests.Services
         [Theory]
         [InlineData(
             "10-30-05 01/01/2023",
+            "Some Game",
             "c:\\somefolder\\",
             "c:\\somefolder\\somesubfolder\\file.ext",
             "bak",
@@ -16,6 +17,7 @@ namespace SaveGuardian.UnitTests.Services
             "C:/Users/nickp/AppData/Local/SaveVersioningPoc/Some Game/somesubfolder/file.ext_01012023-103005.bak")]
         [InlineData(
             "10-30-05 01/01/2023",
+            "Some Game",
             "c:\\somefolder\\",
             "c:\\somefolder\\file.ext",
             "bak",
@@ -23,6 +25,7 @@ namespace SaveGuardian.UnitTests.Services
             "C:/Users/nickp/AppData/Local/SaveVersioningPoc/Some Game/file.ext_01012023-103005.bak")]
         [InlineData(
             "10-30-05 01/01/2023",
+            "Some Game",
             "opt/someapp/",
             "opt/someapp/somefolder/file.ext",
             "bak",
@@ -30,6 +33,7 @@ namespace SaveGuardian.UnitTests.Services
             "home/.local/share/SaveVersioningPoc/Some Game/somefolder/file.ext_01012023-103005.bak")]
         [InlineData(
             "10-30-05 01/01/2023",
+            "Some Game",
             "opt/someapp/",
             "opt/someapp/file.ext",
             "bak",
@@ -37,6 +41,7 @@ namespace SaveGuardian.UnitTests.Services
             "home/.local/share/SaveVersioningPoc/Some Game/file.ext_01012023-103005.bak")]
         public void GivenVersionFolder_AndFullPath_AndExtension_WhenRename_ThenExpectedFileNameReturned(
             string dateTime,
+            string versionFolderName,
             string versionFolderPath,
             string fullPath,
             string extension,
@@ -48,7 +53,7 @@ namespace SaveGuardian.UnitTests.Services
             var mockSpecialFolderService = new Mock<ISpecialFolderService>();
             var versionFolder = new VersionFolder
             {
-                Name = "Some Game",
+                Name = versionFolderName,
                 Path = versionFolderPath
             };
             var sut = new BackupFileNamingService(
