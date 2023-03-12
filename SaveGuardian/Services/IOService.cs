@@ -1,5 +1,8 @@
-﻿namespace SaveGuardian.Services;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace SaveGuardian.Services;
+
+[ExcludeFromCodeCoverage]
 public class IOService : IIOService
 {
     public void CopyFile(

@@ -34,8 +34,7 @@ public class GuardianService : IGuardianService
         {
             return;
         }
-
-        
+  
         foreach (var curFolder in _guardianServiceConfigurator.VersionFolders)
         {
             var backupRoot = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);

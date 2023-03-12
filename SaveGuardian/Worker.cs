@@ -17,7 +17,7 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        if(! await _guardianService.InitialiseAsync(stoppingToken))
+        if(!await _guardianService.InitialiseAsync(stoppingToken))
         {
             _logger.LogError("Failed to initialise guardian service.");
             return;
