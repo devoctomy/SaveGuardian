@@ -18,9 +18,15 @@ namespace SaveGuardian.Services
         public string Rename(
             VersionFolder versionFolder,
             string fullPath,
-            string extension)
+            string extension,
+            bool createDirectory)
         {
             var backupPath = GetVersionFolderBackupPath(versionFolder);
+            if(createDirectory)
+            {
+                Directory.CreateDirectory(backupPath);
+            }
+
             var relativePath = fullPath.Replace(versionFolder.Path, string.Empty).TrimStart('/');
             var backupFullPath = $"{backupPath}/{relativePath}_{_dateTimeService.Now:ddMMyyyy-HHmmss}.{extension}";
             return backupFullPath.Replace('\\', '/');
@@ -34,7 +40,6 @@ namespace SaveGuardian.Services
                 backupRoot += "/";
             }
             backupRoot += $"SaveVersioningPoc/{versionFolder.Name}";
-            Directory.CreateDirectory(backupRoot);
             return backupRoot;
         }
     }

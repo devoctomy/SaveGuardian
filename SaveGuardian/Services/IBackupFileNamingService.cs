@@ -7,6 +7,7 @@ namespace SaveGuardian.Services
         public string Rename(
             VersionFolder versionFolder,
             string fullPath,
-            string extension);
+            string extension,
+            bool createDirectory);
     }
 }

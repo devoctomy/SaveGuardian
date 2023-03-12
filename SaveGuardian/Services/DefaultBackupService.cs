@@ -28,7 +28,8 @@ public class DefaultBackupService : IBackupService
         var backupFullPath = _backupFileNamingService.Rename(
             versionFolder,
             path,
-            ".bak");
+            ".bak",
+            true);
         var backupFileInfo = new FileInfo(backupFullPath);
 
         backupFileInfo?.Directory?.Create();

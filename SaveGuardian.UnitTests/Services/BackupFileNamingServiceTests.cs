@@ -73,7 +73,8 @@ namespace SaveGuardian.UnitTests.Services
             var result = sut.Rename(
                 versionFolder,
                 fullPath,
-                extension);
+                extension,
+                false);
 
             // Assert
             Assert.Equal(expectedResult, result);
