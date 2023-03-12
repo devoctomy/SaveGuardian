@@ -4,15 +4,22 @@ namespace SaveGuardian.Services
 {
     public class BackupFileNamingService : IBackupFileNamingService
     {
+        private readonly IDateTimeService _dateTimeService;
+
+        public BackupFileNamingService(IDateTimeService dateTimeService)
+        {
+            _dateTimeService = dateTimeService;
+        }
+
         public string Rename(
             VersionFolder versionFolder,
             string fullPath,
             string extension)
         {
-            var backupPath = GetVersionFolderBackupPath(versionFolder);
+            var backupPath = GetVersionFolderBackupPath(versionFolder).FullName.Replace('\\', '/').TrimStart('/'); ;
             var relativePath = fullPath.Replace(versionFolder.Path, string.Empty);
             var cleanPath = relativePath.Replace('\\', '/').TrimStart('/');
-            var backupFullPath = $"{backupPath}/{cleanPath}_{DateTime.Now.ToString("ddMMyyyy-HHmmss")}.{extension}";
+            var backupFullPath = $"{backupPath}/{cleanPath}_{_dateTimeService.Now:ddMMyyyy-HHmmss}.{extension}";
             return backupFullPath;
         }
 
