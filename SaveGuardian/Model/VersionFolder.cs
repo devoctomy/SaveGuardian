@@ -7,5 +7,5 @@ public class VersionFolder
     public string Filter { get; set; } = string.Empty;
     public bool IncludeSubdirectories { get; set; }
     public TimeSpan ChangeGracePeriod { get; set; }
-    public List<string> BackupBlockingProcesses { get; } = new List<string>();
+    public List<string> BackupBlockingProcesses { get; set; } = new List<string>();
 }

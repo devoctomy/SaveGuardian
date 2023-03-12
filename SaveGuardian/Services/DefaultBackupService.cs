@@ -7,23 +7,25 @@ public class DefaultBackupService : IBackupService
     private readonly ILogger<DefaultBackupService> _logger;
     private readonly IBackupFileNamingService _backupFileNamingService;
     private readonly IIOService _ioService;
+    private readonly IProcessService _processService;
 
     public DefaultBackupService(
         ILogger<DefaultBackupService> logger,
         IBackupFileNamingService backupFileNamingService,
-        IIOService ioService)
+        IIOService ioService,
+        IProcessService processService)
     {
         _logger = logger;
         _backupFileNamingService = backupFileNamingService;
         _ioService = ioService;
+        _processService = processService;
     }
 
     public bool Process(
         VersionFolder versionFolder,
         string path)
     {
-        var block = versionFolder.BackupBlockingProcesses.Any(x => System.Diagnostics.Process.GetProcessesByName(x).Length > 0);
-        if (block)
+        if (_processService.IsRunning(versionFolder.BackupBlockingProcesses))
         {
             return false;
         }
@@ -31,12 +33,9 @@ public class DefaultBackupService : IBackupService
         var backupFullPath = _backupFileNamingService.Rename(
             versionFolder,
             path,
-            ".bak");
-        var backupFileInfo = new FileInfo(backupFullPath);
-        if(backupFileInfo?.Directory?.FullName != null)
-        {
-            _ioService.CreateDirectory(backupFileInfo.Directory.FullName);
-        }
+            "bak");
+        var backDirectory = backupFullPath[..backupFullPath.LastIndexOf('/')];
+        _ioService.CreateDirectory(backDirectory);
         _ioService.CopyFile(
             path,
             backupFullPath,
