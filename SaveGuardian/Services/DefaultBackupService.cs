@@ -5,10 +5,14 @@ namespace SaveGuardian.Services;
 public class DefaultBackupService : IBackupService
 {
     private readonly ILogger<DefaultBackupService> _logger;
+    private readonly IBackupFileNamingService _backupFileNamingService;
 
-    public DefaultBackupService(ILogger<DefaultBackupService> logger)
+    public DefaultBackupService(
+        ILogger<DefaultBackupService> logger,
+        IBackupFileNamingService backupFileNamingService)
     {
         _logger = logger;
+        _backupFileNamingService = backupFileNamingService;
     }
 
     public bool Process(
@@ -21,28 +25,18 @@ public class DefaultBackupService : IBackupService
             return false;
         }
 
-        var backupPath = GetVersionFolderBackupPath(versionFolder);
-        var relativePath = path.Replace(versionFolder.Path, string.Empty);
-        var cleanPath = relativePath.Replace('\\', '/').TrimStart('/');
-        var fileName = cleanPath[(cleanPath.LastIndexOf('/') + 1)..];
-        var pathNoFile = cleanPath[..cleanPath.LastIndexOf('/')];
-        var backupFullPath = $"{backupPath}/{cleanPath}_{DateTime.Now.ToString("ddMMyyyy-HHmmss")}.bak";
+        var backupFullPath = _backupFileNamingService.Rename(
+            versionFolder,
+            path,
+            ".bak");
+        var backupFileInfo = new FileInfo(backupFullPath);
 
-        backupPath.CreateSubdirectory(pathNoFile);
+        backupFileInfo?.Directory?.Create();
         File.Copy(
             path,
             backupFullPath);
 
-        _logger.LogInformation($"Creating versioned copy of file '{relativePath}' for version folder '{versionFolder.Name}'");
+        _logger.LogInformation($"Creating versioned copy of file '{path}' for version folder '{versionFolder.Name}'");
         return true;
-    }
-
-    private static DirectoryInfo GetVersionFolderBackupPath(VersionFolder versionFolder)
-    {
-        var backupRoot = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        var backupRootDI = new DirectoryInfo(backupRoot);
-        var appDirDI = backupRootDI.CreateSubdirectory("SaveVersioningPoc");
-        var versionFolderDir = appDirDI.CreateSubdirectory(versionFolder.Name);
-        return versionFolderDir;
     }
 }

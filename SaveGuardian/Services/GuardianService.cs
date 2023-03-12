@@ -7,14 +7,16 @@ public class GuardianService : IGuardianService
     private readonly ILogger<GuardianService> _logger;
     private readonly IGuardianServiceConfigurator _guardianServiceConfigurator;
     private readonly IBackupService _backupService;
-    private Dictionary<FileSystemWatcher, VersionFolder>? _watchers;
-    private List<BackupOperation> _pendingBackups = new();
+    private Dictionary<FileSystemWatcher, VersionFolder> _watchers;
+    private List<BackupOperation> _pendingBackups;
 
     public GuardianService(
         ILogger<GuardianService> logger,
         IGuardianServiceConfigurator guardianServiceConfigurator,
         IBackupService backupService)
     {
+        _watchers = new Dictionary<FileSystemWatcher, VersionFolder>();
+        _pendingBackups = new List<BackupOperation>();
         _logger = logger;
         _guardianServiceConfigurator = guardianServiceConfigurator;
         _backupService = backupService;
@@ -33,7 +35,7 @@ public class GuardianService : IGuardianService
             return;
         }
 
-        _watchers = new Dictionary<FileSystemWatcher, VersionFolder>();
+        
         foreach (var curFolder in _guardianServiceConfigurator.VersionFolders)
         {
             var backupRoot = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
@@ -109,7 +111,7 @@ public class GuardianService : IGuardianService
 
     private void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
     {
-        var versionFolder = _watchers?[(FileSystemWatcher)sender];
+        var versionFolder = _watchers[(FileSystemWatcher)sender];
         if(versionFolder == null)
         {
             return;
@@ -122,7 +124,7 @@ public class GuardianService : IGuardianService
 
     private void FileSystemWatcher_Created(object sender, FileSystemEventArgs e)
     {
-        var versionFolder = _watchers?[(FileSystemWatcher)sender];
+        var versionFolder = _watchers[(FileSystemWatcher)sender];
         if (versionFolder == null)
         {
             return;
