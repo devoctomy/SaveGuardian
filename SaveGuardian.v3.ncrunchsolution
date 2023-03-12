@@ -1,6 +1,7 @@
 ﻿<SolutionConfiguration>
   <Settings>
     <AllowParallelTestExecution>True</AllowParallelTestExecution>
+    <MetricsExclusionList />
     <SolutionConfigured>True</SolutionConfigured>
   </Settings>
 </SolutionConfiguration>

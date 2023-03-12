@@ -63,7 +63,7 @@ public class GuardianServiceConfiguratorTests
 
         // Assert
         Assert.True(result);
-        Assert.Equal(config.VersionFolders[0].Name, sut.VersionFolders[0].Name);
+        Assert.Equal(config.VersionFolders[0].Name, sut.VersionFolders?[0].Name);
         mockIOService.Verify(x => x.ReadAllTextAsync(
             It.Is<string>(y => y == "Config/folders.json"),
             It.Is<CancellationToken>(y => y == cancellationTokenSource.Token)), Times.Once);
