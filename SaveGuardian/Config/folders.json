@@ -1,0 +1,14 @@
+﻿{
+  "VersionFolders": [
+    {
+      "Name": "Elden Ring",
+      "Path": "C:/Users/nickp/AppData/Roaming/EldenRing",
+      "IncludeSubdirectories": true,
+      "Filter": "*.sl2",
+      "ChangeGracePeriod": "00:00:05",
+      "BackupBlockingProcesses": [
+        "EldenRing.exe"
+      ]
+    }
+  ]
+}

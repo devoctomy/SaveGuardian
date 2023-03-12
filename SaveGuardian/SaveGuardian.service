@@ -1,0 +1,9 @@
+﻿[Unit]
+Description=Save Guardian
+
+[Service]
+Type=notify
+ExecStart=/usr/sbin/SaveGuardian
+
+[Install]
+WantedBy=multi-user.target
