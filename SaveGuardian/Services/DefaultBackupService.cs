@@ -6,13 +6,16 @@ public class DefaultBackupService : IBackupService
 {
     private readonly ILogger<DefaultBackupService> _logger;
     private readonly IBackupFileNamingService _backupFileNamingService;
+    private readonly IIOService _ioService;
 
     public DefaultBackupService(
         ILogger<DefaultBackupService> logger,
-        IBackupFileNamingService backupFileNamingService)
+        IBackupFileNamingService backupFileNamingService,
+        IIOService ioService)
     {
         _logger = logger;
         _backupFileNamingService = backupFileNamingService;
+        _ioService = ioService;
     }
 
     public bool Process(
@@ -28,11 +31,12 @@ public class DefaultBackupService : IBackupService
         var backupFullPath = _backupFileNamingService.Rename(
             versionFolder,
             path,
-            ".bak",
-            true);
+            ".bak");
         var backupFileInfo = new FileInfo(backupFullPath);
-
-        backupFileInfo?.Directory?.Create();
+        if(backupFileInfo?.Directory?.FullName != null)
+        {
+            _ioService.CreateDirectory(backupFileInfo.Directory.FullName);
+        }
         File.Copy(
             path,
             backupFullPath);

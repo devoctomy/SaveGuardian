@@ -73,8 +73,7 @@ public class BackupFileNamingServiceTests
         var result = sut.Rename(
             versionFolder,
             fullPath,
-            extension,
-            false);
+            extension);
 
         // Assert
         Assert.Equal(expectedResult, result);

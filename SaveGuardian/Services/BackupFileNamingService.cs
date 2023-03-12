@@ -18,15 +18,9 @@ public class BackupFileNamingService : IBackupFileNamingService
     public string Rename(
         VersionFolder versionFolder,
         string fullPath,
-        string extension,
-        bool createDirectory)
+        string extension)
     {
         var backupPath = GetVersionFolderBackupPath(versionFolder);
-        if(createDirectory)
-        {
-            Directory.CreateDirectory(backupPath);
-        }
-
         var relativePath = fullPath.Replace(versionFolder.Path, string.Empty).TrimStart('/');
         var backupFullPath = $"{backupPath}/{relativePath}_{_dateTimeService.Now:ddMMyyyy-HHmmss}.{extension}";
         return backupFullPath.Replace('\\', '/');

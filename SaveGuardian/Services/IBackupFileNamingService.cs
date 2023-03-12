@@ -7,6 +7,5 @@ public interface IBackupFileNamingService
     public string Rename(
         VersionFolder versionFolder,
         string fullPath,
-        string extension,
-        bool createDirectory);
+        string extension);
 }
