@@ -28,6 +28,13 @@ namespace SaveGuardian.UnitTests.Services
             "bak",
             "home/.local/share",
             "home/.local/share/SaveVersioningPoc/Some Game/somefolder/file.ext_01012023-103005.bak")]
+        [InlineData(
+            "10-30-05 01/01/2023",
+            "opt/someapp/",
+            "opt/someapp/file.ext",
+            "bak",
+            "home/.local/share",
+            "home/.local/share/SaveVersioningPoc/Some Game/file.ext_01012023-103005.bak")]
         public void GivenVersionFolder_AndFullPath_AndExtension_WhenRename_ThenExpectedFileNameReturned(
             string dateTime,
             string versionFolderPath,
