@@ -2,6 +2,6 @@
 
 public interface IGuardianService
 {
-    public Task<bool> Initialise();
+    public Task<bool> InitialiseAsync(CancellationToken cancellationToken);
     public void SetupWatchers();
 }

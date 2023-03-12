@@ -14,4 +14,11 @@ public class IOService : IIOService
     {
         Directory.CreateDirectory(fullPath);
     }
+
+    public Task<string> ReadAllTextAsync(
+        string fullPath,
+        CancellationToken cancellationToken)
+    {
+        return File.ReadAllTextAsync(fullPath, cancellationToken);
+    }
 }

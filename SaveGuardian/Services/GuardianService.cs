@@ -22,9 +22,9 @@ public class GuardianService : IGuardianService
         _backupService = backupService;
     }
 
-    public async Task<bool> Initialise()
+    public async Task<bool> InitialiseAsync(CancellationToken cancellationToken)
     {
-        return await _guardianServiceConfigurator.Initialise();
+        return await _guardianServiceConfigurator.InitialiseAsync(cancellationToken);
     }
 
     public void SetupWatchers()

@@ -8,18 +8,23 @@ public class GuardianServiceConfigurator : IGuardianServiceConfigurator
 {
     public IReadOnlyList<VersionFolder>? VersionFolders => _versionFolders;
 
+    private readonly IIOService _ioService;
     private List<VersionFolder>? _versionFolders;
 
-    public async Task<bool> Initialise()
+    public GuardianServiceConfigurator(IIOService ioService)
     {
-        var configJson = await File.ReadAllTextAsync("Config/folders.json");
-        var config = JObject.Parse(configJson);
+        _ioService = ioService;
+    }
 
-        if (config == null)
+    public async Task<bool> InitialiseAsync(CancellationToken cancellationToken)
+    {
+        var configJson = await _ioService.ReadAllTextAsync("Config/folders.json", cancellationToken);
+        if(string.IsNullOrEmpty(configJson))
         {
             return false;
         }
 
+        var config = JObject.Parse(configJson);
         var versionFoldersArray = config["VersionFolders"]?.Value<JArray>();
         if (versionFoldersArray == null || versionFoldersArray.Count == 0)
         {
