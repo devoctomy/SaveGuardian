@@ -37,9 +37,10 @@ public class DefaultBackupService : IBackupService
         {
             _ioService.CreateDirectory(backupFileInfo.Directory.FullName);
         }
-        File.Copy(
+        _ioService.CopyFile(
             path,
-            backupFullPath);
+            backupFullPath,
+            true); // !!! overwrite? should never conflict
 
         _logger.LogInformation($"Creating versioned copy of file '{path}' for version folder '{versionFolder.Name}'");
         return true;

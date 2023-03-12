@@ -3,5 +3,6 @@
     public interface IIOService
     {
         public void CreateDirectory(string fullPath);
+        public void CopyFile(string source, string destination, bool overwrite);
     }
 }
