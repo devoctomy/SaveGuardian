@@ -7,7 +7,16 @@ namespace SaveGuardian.UnitTests.Services
     public class BackupFileNamingServiceTests
     {
         [Theory]
-        [InlineData("10-30-05 01/01/2023", "c:\\somefolder\\somesubfolder\\file.ext", "bak", "C:/Users/nickp/AppData/Local/SaveVersioningPoc/Some Game/somesubfolder/file.ext_01012023-103005.bak")]
+        [InlineData(
+            "10-30-05 01/01/2023",
+            "c:\\somefolder\\somesubfolder\\file.ext",
+            "bak",
+            "C:/Users/nickp/AppData/Local/SaveVersioningPoc/Some Game/somesubfolder/file.ext_01012023-103005.bak")]
+        [InlineData(
+            "10-30-05 01/01/2023",
+            "c:\\somefolder\\file.ext",
+            "bak",
+            "C:/Users/nickp/AppData/Local/SaveVersioningPoc/Some Game/file.ext_01012023-103005.bak")]
         public void GivenVersionFolder_AndFullPath_AndExtension_WhenRename_ThenExpectedFileNameReturned(
             string dateTime,
             string fullPath,
