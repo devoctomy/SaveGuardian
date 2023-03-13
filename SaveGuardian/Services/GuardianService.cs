@@ -7,19 +7,21 @@ public class GuardianService : IGuardianService
     private readonly ILogger<GuardianService> _logger;
     private readonly IGuardianServiceConfigurator _guardianServiceConfigurator;
     private readonly IBackupService _backupService;
-    private Dictionary<FileSystemWatcher, VersionFolder> _watchers;
+    private readonly IMultiFileSystemWatcherService _multiFileSystemWatcherService;
     private List<BackupOperation> _pendingBackups;
 
     public GuardianService(
         ILogger<GuardianService> logger,
         IGuardianServiceConfigurator guardianServiceConfigurator,
-        IBackupService backupService)
+        IBackupService backupService,
+        IMultiFileSystemWatcherService multiFileSystemWatcherService)
     {
-        _watchers = new Dictionary<FileSystemWatcher, VersionFolder>();
         _pendingBackups = new List<BackupOperation>();
         _logger = logger;
         _guardianServiceConfigurator = guardianServiceConfigurator;
         _backupService = backupService;
+        _multiFileSystemWatcherService = multiFileSystemWatcherService;
+        _multiFileSystemWatcherService.ChangeOccurred += _multiFileSystemWatcherService_ChangeOccurred;
     }
 
     public async Task<bool> InitialiseAsync(CancellationToken cancellationToken)
@@ -34,31 +36,8 @@ public class GuardianService : IGuardianService
         {
             return;
         }
-  
-        foreach (var curFolder in _guardianServiceConfigurator.VersionFolders)
-        {
-            var backupRoot = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            var backupRootDI = new DirectoryInfo(backupRoot);
-            var appDirDI = backupRootDI.CreateSubdirectory("SaveGuardian");
-            var versionFolderDir = appDirDI.CreateSubdirectory(curFolder.Name);
 
-            var fileSystemWatcher = new FileSystemWatcher(
-                curFolder.Path,
-                curFolder.Filter)
-            {
-                IncludeSubdirectories = curFolder.IncludeSubdirectories,
-                NotifyFilter = NotifyFilters.Attributes |
-                NotifyFilters.CreationTime |
-                NotifyFilters.FileName |
-                NotifyFilters.LastAccess |
-                NotifyFilters.LastWrite |
-                NotifyFilters.Size |
-                NotifyFilters.Security
-            };
-            fileSystemWatcher.Created += FileSystemWatcher_Created;
-            fileSystemWatcher.Changed += FileSystemWatcher_Changed;
-            _watchers.Add(fileSystemWatcher, curFolder);
-        }
+        _multiFileSystemWatcherService.Initialise(_guardianServiceConfigurator.VersionFolders);
     }
 
     private void QueueBackup(
@@ -100,37 +79,20 @@ public class GuardianService : IGuardianService
                 backupOperation.Path);
             if (!backedUp)
             {
+                _logger.LogInformation("Backup process returned false, queuing for another attempt.");
                 backupOperation.Changed();
                 return;
             }
 
+            _logger.LogInformation("Backup process was successful.");
             _pendingBackups.Remove(backupOperation);
         }
     }
 
-    private void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
+    private void _multiFileSystemWatcherService_ChangeOccurred(object? sender, MultiFileSystemWatcherServiceChangeOccurredEventArgs e)
     {
-        var versionFolder = _watchers[(FileSystemWatcher)sender];
-        if(versionFolder == null)
-        {
-            return;
-        }
-
-        var relativePath = e.FullPath.Replace(versionFolder.Path, string.Empty);
-        _logger.LogInformation($"File '{relativePath}' changed in version folder '{versionFolder.Name}'");
-        QueueBackup(versionFolder, e.FullPath);
-    }
-
-    private void FileSystemWatcher_Created(object sender, FileSystemEventArgs e)
-    {
-        var versionFolder = _watchers[(FileSystemWatcher)sender];
-        if (versionFolder == null)
-        {
-            return;
-        }
-
-        var relativePath = e.FullPath.Replace(versionFolder.Path, string.Empty);
-        _logger.LogInformation($"File '{relativePath}' created in version folder '{versionFolder.Name}'");
-        QueueBackup(versionFolder, e.FullPath);
+        var relativePath = e.FullPath.Replace(e.VersionFolder.Path, string.Empty);
+        _logger.LogInformation($"File '{relativePath}' changed in version folder '{e.VersionFolder.Name}'");
+        QueueBackup(e.VersionFolder, e.FullPath);
     }
 }

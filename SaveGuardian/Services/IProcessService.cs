@@ -1,7 +1,6 @@
-﻿namespace SaveGuardian.Services
+﻿namespace SaveGuardian.Services;
+
+public interface IProcessService
 {
-    public interface IProcessService
-    {
-        public bool IsRunning(List<string> processNames);
-    }
+    public bool IsRunning(List<string> processNames);
 }
