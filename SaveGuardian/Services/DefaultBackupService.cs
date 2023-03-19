@@ -41,7 +41,7 @@ public class DefaultBackupService : IBackupService
             backupFullPath,
             true); // !!! overwrite? should never conflict
 
-        _logger.LogInformation($"Creating versioned copy of file '{path}' for version folder '{versionFolder.Name}'");
+        _logger.LogInformation($"Creating versioned copy of file '{path}' for version folder '{versionFolder.Name}' using the backup filename '{backupFullPath}'.");
         return true;
     }
 }

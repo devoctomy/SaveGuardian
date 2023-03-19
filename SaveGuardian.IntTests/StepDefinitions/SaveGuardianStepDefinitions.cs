@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using SaveGuardian.Model;
+using System;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -101,13 +102,19 @@ namespace SaveGuardian.IntTests.StepDefinitions
         }
 
         [Then(@"copy of (.*) created in version folder (.*) backup path")]
-        public void ThenCopyOfCreatedIn(
+        public async Task ThenCopyOfCreatedIn(
             string fileKey,
             string name)
         {
             var fileKeys = _context.Get<Dictionary<string, string>>("FileKeys");
             var source = fileKeys[fileKey];
-            var backupPath = GetVersionFolderBackupPath(name);
+            var sourceName = new FileInfo(source).Name;
+            var backupPath = GetVersionFolderBackupPath(name).Replace("\\", "/");
+            var backupFullPathWithoutSuffix = Path.Combine(backupPath, sourceName);
+            var allBackupFiles = Directory.GetFiles(backupPath, "*", SearchOption.TopDirectoryOnly);
+            var suitableBackup = allBackupFiles.SingleOrDefault(x => x.StartsWith(backupFullPathWithoutSuffix, StringComparison.InvariantCultureIgnoreCase));
+            Assert.NotNull(suitableBackup);
+            Assert.Equal("Hello World!", await File.ReadAllTextAsync(suitableBackup));
         }
 
         [Then(@"SaveGuardian process is closed")]
@@ -116,7 +123,15 @@ namespace SaveGuardian.IntTests.StepDefinitions
             var saveGuardianProcess = _context.Get<Process>("SaveGuardianProcess");
             try
             {
-                var output = await saveGuardianProcess.StandardOutput.ReadToEndAsync();
+                var output = new List<string>();
+                while (saveGuardianProcess.StandardOutput.Peek() > -1)
+                {
+                    var line = saveGuardianProcess.StandardOutput.ReadLine();
+                    if(line != null)
+                    {
+                        output.Add(line);
+                    }
+                }
                 saveGuardianProcess.Close();
                 while (!saveGuardianProcess.HasExited)
                 {
@@ -124,7 +139,7 @@ namespace SaveGuardian.IntTests.StepDefinitions
                     saveGuardianProcess.Close();
                 }
             }
-            catch(InvalidOperationException ioex)
+            catch (InvalidOperationException ioex)
             {
                 // Do nothing
             }

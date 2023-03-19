@@ -14,7 +14,7 @@ public class BackupFileNamingServiceTests
         "c:\\somefolder\\somesubfolder\\file.ext",
         "bak",
         "C:\\Users\\nickp\\AppData\\Local",
-        "C:/Users/nickp/AppData/Local/SaveVersioningPoc/Some Game/somesubfolder/file.ext_01012023-103005.bak")]
+        "C:/Users/nickp/AppData/Local/SaveGuardian/Some Game/somesubfolder/file.ext_01012023-103005.bak")]
     [InlineData(
         "10-30-05 01/01/2023",
         "Some Game",
@@ -22,7 +22,7 @@ public class BackupFileNamingServiceTests
         "c:\\somefolder\\file.ext",
         "bak",
         "C:\\Users\\nickp\\AppData\\Local",
-        "C:/Users/nickp/AppData/Local/SaveVersioningPoc/Some Game/file.ext_01012023-103005.bak")]
+        "C:/Users/nickp/AppData/Local/SaveGuardian/Some Game/file.ext_01012023-103005.bak")]
     [InlineData(
         "10-30-05 01/01/2023",
         "Some Game",
@@ -30,7 +30,7 @@ public class BackupFileNamingServiceTests
         "opt/someapp/somefolder/file.ext",
         "bak",
         "home/.local/share",
-        "home/.local/share/SaveVersioningPoc/Some Game/somefolder/file.ext_01012023-103005.bak")]
+        "home/.local/share/SaveGuardian/Some Game/somefolder/file.ext_01012023-103005.bak")]
     [InlineData(
         "10-30-05 01/01/2023",
         "Some Game",
@@ -38,7 +38,7 @@ public class BackupFileNamingServiceTests
         "opt/someapp/file.ext",
         "bak",
         "home/.local/share",
-        "home/.local/share/SaveVersioningPoc/Some Game/file.ext_01012023-103005.bak")]
+        "home/.local/share/SaveGuardian/Some Game/file.ext_01012023-103005.bak")]
     public void GivenVersionFolder_AndFullPath_AndExtension_WhenRename_ThenExpectedFileNameReturned(
         string dateTime,
         string versionFolderName,
