@@ -13,6 +13,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<ISpecialFolderService, SpecialFolderService>();
         services.AddSingleton<IGuardianServiceConfigurator, GuardianServiceConfigurator>();
         services.AddSingleton<IBackupService, DefaultBackupService>();
+        services.AddSingleton<IMultiFileSystemWatcherService, MultiFileSystemWatcherService>();
         services.AddSingleton<IGuardianService, GuardianService>();
         services.AddHostedService<Worker>();
     })

@@ -24,10 +24,12 @@ public class Worker : BackgroundService
         }
 
         _guardianService.SetupWatchers();
+        _guardianService.Start();
         while (!stoppingToken.IsCancellationRequested)
         {
             _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
             await Task.Delay(1000, stoppingToken);
         }
+        _guardianService.Stop();
     }
 }

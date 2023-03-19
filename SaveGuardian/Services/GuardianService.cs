@@ -40,6 +40,16 @@ public class GuardianService : IGuardianService
         _multiFileSystemWatcherService.Initialise(_guardianServiceConfigurator.VersionFolders);
     }
 
+    public void Start()
+    {
+        _multiFileSystemWatcherService.Start();
+    }
+
+    public void Stop()
+    {
+        _multiFileSystemWatcherService.Stop();
+    }
+
     private void QueueBackup(
         VersionFolder versionFolder,
         string path)
