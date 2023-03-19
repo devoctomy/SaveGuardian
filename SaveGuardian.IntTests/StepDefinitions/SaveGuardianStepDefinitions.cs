@@ -87,10 +87,12 @@ namespace SaveGuardian.IntTests.StepDefinitions
             var testVersionFolderPath = Path.Combine(GetExecutingDirectory() ?? string.Empty, path).Replace("\\", "/");
 
             var newFileName = $"{testVersionFolderPath}{Guid.NewGuid()}{newFileExtension}";
-            await File.WriteAllTextAsync(newFileName, "Hello World!");
+            var contents = Guid.NewGuid().ToString();
+            await File.WriteAllTextAsync(newFileName, contents);
 
             fileKeys.Add(key, newFileName);
             _context.Set(fileKeys, "FileKeys");
+            _context.Set(contents, $"{key}Contents");
         }
 
         [Given(@"wait for (.*) seconds")]
@@ -110,11 +112,13 @@ namespace SaveGuardian.IntTests.StepDefinitions
             var source = fileKeys[fileKey];
             var sourceName = new FileInfo(source).Name;
             var backupPath = GetVersionFolderBackupPath(name).Replace("\\", "/");
-            var backupFullPathWithoutSuffix = Path.Combine(backupPath, sourceName);
+            var backupFullPathWithoutSuffix = Path.Combine(backupPath, sourceName).Replace("\\", "/");
             var allBackupFiles = Directory.GetFiles(backupPath, "*", SearchOption.TopDirectoryOnly);
+            allBackupFiles = allBackupFiles.Select(x => x.Replace("\\", "/")).ToArray();
             var suitableBackup = allBackupFiles.SingleOrDefault(x => x.StartsWith(backupFullPathWithoutSuffix, StringComparison.InvariantCultureIgnoreCase));
             Assert.NotNull(suitableBackup);
-            Assert.Equal("Hello World!", await File.ReadAllTextAsync(suitableBackup));
+            var expectedContents = _context.Get<string>($"{fileKey}Contents");
+            Assert.Equal(expectedContents, await File.ReadAllTextAsync(suitableBackup));
         }
 
         [Then(@"SaveGuardian process is closed")]
