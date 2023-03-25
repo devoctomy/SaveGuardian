@@ -15,6 +15,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<IBackupService, DefaultBackupService>();
         services.AddSingleton<IMultiFileSystemWatcherService, MultiFileSystemWatcherService>();
         services.AddSingleton<IGuardianService, GuardianService>();
+        services.AddSingleton<IHashingService, Sha256HashingService>();
         services.AddHostedService<Worker>();
     })
     .Build();

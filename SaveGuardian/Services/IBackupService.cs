@@ -4,7 +4,7 @@ namespace SaveGuardian.Services;
 
 public interface IBackupService
 {
-    bool Process(
+    Task<bool> ProcessAsync(
         VersionFolder versionFolder,
         string path);
 }

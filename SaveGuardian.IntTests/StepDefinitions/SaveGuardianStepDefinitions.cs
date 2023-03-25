@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using SaveGuardian.Model;
+using SaveGuardian.Services;
 using System;
 using System.Diagnostics;
 using System.Reflection;
@@ -115,10 +116,15 @@ namespace SaveGuardian.IntTests.StepDefinitions
             var backupFullPathWithoutSuffix = Path.Combine(backupPath, sourceName).Replace("\\", "/");
             var allBackupFiles = Directory.GetFiles(backupPath, "*", SearchOption.TopDirectoryOnly);
             allBackupFiles = allBackupFiles.Select(x => x.Replace("\\", "/")).ToArray();
-            var suitableBackup = allBackupFiles.SingleOrDefault(x => x.StartsWith(backupFullPathWithoutSuffix, StringComparison.InvariantCultureIgnoreCase));
+            var suitableBackup = allBackupFiles.SingleOrDefault(x => x.StartsWith(backupFullPathWithoutSuffix, StringComparison.InvariantCultureIgnoreCase) && ! x.EndsWith(".hash"));
             Assert.NotNull(suitableBackup);
             var expectedContents = _context.Get<string>($"{fileKey}Contents");
             Assert.Equal(expectedContents, await File.ReadAllTextAsync(suitableBackup));
+
+            using var hashingService = new Sha256HashingService();
+            var suitableHashFile = allBackupFiles.SingleOrDefault(x => x.StartsWith(backupFullPathWithoutSuffix, StringComparison.InvariantCultureIgnoreCase) && x.EndsWith(".hash"));
+            Assert.NotNull(suitableHashFile);
+            Assert.Equal(await File.ReadAllTextAsync(suitableHashFile), await hashingService.HashFileAsync(suitableBackup, CancellationToken.None));
         }
 
         [Then(@"SaveGuardian process is closed")]
@@ -143,7 +149,7 @@ namespace SaveGuardian.IntTests.StepDefinitions
                     saveGuardianProcess.Close();
                 }
             }
-            catch (InvalidOperationException ioex)
+            catch (InvalidOperationException)
             {
                 // Do nothing
             }

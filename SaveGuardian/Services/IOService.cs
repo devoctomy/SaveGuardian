@@ -24,4 +24,12 @@ public class IOService : IIOService
     {
         return File.ReadAllTextAsync(fullPath, cancellationToken);
     }
+
+    public Task WriteAllTextAsync(
+        string fullPath,
+        string contents,
+        CancellationToken cancellationToken)
+    {
+        return File.WriteAllTextAsync(fullPath, contents, cancellationToken);
+    }
 }

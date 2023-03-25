@@ -18,11 +18,13 @@ public class BackupFileNamingService : IBackupFileNamingService
     public string Rename(
         VersionFolder versionFolder,
         string fullPath,
-        string extension)
+        string extension,
+        bool includeDate)
     {
         var backupPath = GetVersionFolderBackupPath(versionFolder);
         var relativePath = fullPath.Replace(versionFolder.Path, string.Empty).TrimStart('/');
-        var backupFullPath = $"{backupPath}/{relativePath}_{_dateTimeService.Now:ddMMyyyy-HHmmss}.{extension}";
+        var timestamp = includeDate ? $"_{_dateTimeService.Now:ddMMyyyy-HHmmss}" : null;
+        var backupFullPath = $"{backupPath}/{relativePath}{timestamp}.{extension}";
         return backupFullPath.Replace('\\', '/');
     }
 

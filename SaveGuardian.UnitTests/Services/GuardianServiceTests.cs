@@ -113,9 +113,9 @@ public class GuardianServiceTests
             versionFolder,
             "c:/somefolder/subfolder/file.ext");
 
-        mockBackupService.Setup(x => x.Process(
+        mockBackupService.Setup(x => x.ProcessAsync(
             It.IsAny<VersionFolder>(),
-            It.IsAny<string>())).Returns(true);
+            It.IsAny<string>())).ReturnsAsync(true);
 
         // Act
         mockMultiFileSystemWatcherService.Raise(x => x.ChangeOccurred += null,
@@ -126,7 +126,7 @@ public class GuardianServiceTests
         await Task.Delay(TimeSpan.FromSeconds(6));
 
         // Assert
-        mockBackupService.Verify(x => x.Process(
+        mockBackupService.Verify(x => x.ProcessAsync(
             It.Is<VersionFolder>(y => y == eventArgs.VersionFolder),
             It.Is<string>(y => y == eventArgs.FullPath)), Times.Once);
     }
@@ -155,14 +155,14 @@ public class GuardianServiceTests
             versionFolder,
             "c:/somefolder/subfolder/file.ext");
 
-        mockBackupService.Setup(x => x.Process(
+        mockBackupService.Setup(x => x.ProcessAsync(
                 It.IsAny<VersionFolder>(),
                 It.IsAny<string>()))
             .Callback((VersionFolder versionFolder, string path) =>
             {
                 attempts++;
             })
-            .Returns(() =>
+            .ReturnsAsync(() =>
             {
                 return attempts == 2;
             });
@@ -177,7 +177,7 @@ public class GuardianServiceTests
         await Task.Delay(TimeSpan.FromSeconds(6));
 
         // Assert
-        mockBackupService.Verify(x => x.Process(
+        mockBackupService.Verify(x => x.ProcessAsync(
             It.Is<VersionFolder>(y => y == eventArgs.VersionFolder),
             It.Is<string>(y => y == eventArgs.FullPath)), Times.Exactly(2));
     }

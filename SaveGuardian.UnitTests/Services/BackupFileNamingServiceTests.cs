@@ -13,6 +13,7 @@ public class BackupFileNamingServiceTests
         "c:\\somefolder\\",
         "c:\\somefolder\\somesubfolder\\file.ext",
         "bak",
+        true,
         "C:\\Users\\nickp\\AppData\\Local",
         "C:/Users/nickp/AppData/Local/SaveGuardian/Some Game/somesubfolder/file.ext_01012023-103005.bak")]
     [InlineData(
@@ -21,6 +22,7 @@ public class BackupFileNamingServiceTests
         "c:\\somefolder\\",
         "c:\\somefolder\\file.ext",
         "bak",
+        true,
         "C:\\Users\\nickp\\AppData\\Local",
         "C:/Users/nickp/AppData/Local/SaveGuardian/Some Game/file.ext_01012023-103005.bak")]
     [InlineData(
@@ -29,6 +31,7 @@ public class BackupFileNamingServiceTests
         "opt/someapp/",
         "opt/someapp/somefolder/file.ext",
         "bak",
+        true,
         "home/.local/share",
         "home/.local/share/SaveGuardian/Some Game/somefolder/file.ext_01012023-103005.bak")]
     [InlineData(
@@ -37,14 +40,25 @@ public class BackupFileNamingServiceTests
         "opt/someapp/",
         "opt/someapp/file.ext",
         "bak",
+        true,
         "home/.local/share",
         "home/.local/share/SaveGuardian/Some Game/file.ext_01012023-103005.bak")]
-    public void GivenVersionFolder_AndFullPath_AndExtension_WhenRename_ThenExpectedFileNameReturned(
+    [InlineData(
+        "10-30-05 01/01/2023",
+        "Some Game",
+        "opt/someapp/",
+        "opt/someapp/file.ext",
+        "bak",
+        false,
+        "home/.local/share",
+        "home/.local/share/SaveGuardian/Some Game/file.ext.bak")]
+    public void GivenVersionFolder_AndFullPath_AndExtension_AndIncludeDate_WhenRename_ThenExpectedFileNameReturned(
         string dateTime,
         string versionFolderName,
         string versionFolderPath,
         string fullPath,
         string extension,
+        bool includeDate,
         string localApplicationDataPath,
         string expectedResult)
     {
@@ -73,7 +87,8 @@ public class BackupFileNamingServiceTests
         var result = sut.Rename(
             versionFolder,
             fullPath,
-            extension);
+            extension,
+            includeDate);
 
         // Assert
         Assert.Equal(expectedResult, result);

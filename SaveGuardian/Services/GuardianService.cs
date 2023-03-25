@@ -84,9 +84,9 @@ public class GuardianService : IGuardianService
                 return;
             }
 
-            var backedUp = _backupService.Process(
+            var backedUp = _backupService.ProcessAsync(
                 backupOperation.VersionFolder,
-                backupOperation.Path);
+                backupOperation.Path).GetAwaiter().GetResult();
             if (!backedUp)
             {
                 _logger.LogInformation("Backup process returned false, queuing for another attempt.");
